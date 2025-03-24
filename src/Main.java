@@ -19,13 +19,11 @@ public class Main {
         System.out.println("sqlite3 db \"CREATE TABLE Departments ( department_id integer PRIMARY KEY, department_name varchar(255) );\"");
         System.out.println("sqlite3 db \"CREATE TABLE Rosters ( student_id integer, class_id integer, FOREIGN KEY (student_id) REFERENCES Students(student_id), FOREIGN KEY (class_id) REFERENCES Classes(class_id) );\"");
         System.out.println("sqlite3 db \"CREATE TABLE Assignments ( assignment_name varchar(255), assignment_id integer PRIMARY KEY, type_id integer, FOREIGN KEY (type_id) REFERENCES assignment_types(type_id) );\"");
-=======
 
     }
 
     public static void students() {
-
->>>>>>> 725b6106bdcb35516849f532d1917c3a72b534d4
+        
     }
 
     public static ArrayList<String> getFileData(String fileName) {
