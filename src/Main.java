@@ -19,7 +19,19 @@ public class Main {
         System.out.println("sqlite3 db \"CREATE TABLE Departments ( department_id integer PRIMARY KEY, department_name varchar(255) );\"");
         System.out.println("sqlite3 db \"CREATE TABLE Rosters ( student_id integer, class_id integer, FOREIGN KEY (student_id) REFERENCES Students(student_id), FOREIGN KEY (class_id) REFERENCES Classes(class_id) );\"");
         System.out.println("sqlite3 db \"CREATE TABLE Assignments ( assignment_name varchar(255), assignment_id integer PRIMARY KEY, type_id integer, FOREIGN KEY (type_id) REFERENCES assignment_types(type_id) );\"");
+    }
 
+    public static void drop_database() {
+        System.out.println("sqlite3 db \"DROP TABLE Students;\"");
+        System.out.println("sqlite3 db \"DROP TABLE Courses;\"");
+        System.out.println("sqlite3 db \"DROP TABLE Course_types;\"");
+        System.out.println("sqlite3 db \"DROP TABLE Teachers;\"");
+        System.out.println("sqlite3 db \"DROP TABLE Classes;\"");
+        System.out.println("sqlite3 db \"DROP TABLE Grades;\"");
+        System.out.println("sqlite3 db \"DROP TABLE Assignment_types;\"");
+        System.out.println("sqlite3 db \"DROP TABLE Departments;\"");
+        System.out.println("sqlite3 db \"DROP TABLE Rosters;\"");
+        System.out.println("sqlite3 db \"DROP TABLE Assignments;\"");
     }
 
     public static void students() {
