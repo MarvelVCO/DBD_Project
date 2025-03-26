@@ -1,11 +1,15 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        ArrayList<String> teachers = getFileData("src/teachernames.csv");
         create_database();
+        String[] departments = generate_departments(teachers);
     }
 
     public static void create_database() {
@@ -34,15 +38,32 @@ public class Main {
         System.out.println("DROP TABLE Assignments;");
     }
 
-    public static void students() {
+    public static void generate_students(int n) {
         ArrayList<String> students = getFileData("src/names.txt");
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < n; i++) {
             String first_name = students.get((int) (Math.random() * students.size()));
             String last_name = students.get((int) (Math.random() * students.size()));
             first_name = first_name.substring(0, 1).toUpperCase() + first_name.substring(1);
             last_name = last_name.substring(0, 1).toUpperCase() + last_name.substring(1);
-            System.out.println("sqlite3 DB \"INSERT INTO Students ( first_name, last_name ) VALUES ( '" + first_name + "', '" + last_name + "' )\";");
+            System.out.println("\"INSERT INTO Students ( first_name, last_name, student_id ) VALUES ( '" + first_name + "', '" + last_name + "', " + (i + 1) + " )\";");
         }
+    }
+
+    public static String[] generate_departments(ArrayList<String> teachers) {
+        String[] departments = teachers.get(1).split(",");
+        departments = Arrays.stream(departments).distinct().toArray(String[]::new);
+        departments = Arrays.stream(departments).filter(d ->
+                        ! (d.equals("Brooklyn Tech Principal") ||
+                        d.equals("Administration - Supervisors") ||
+                        d.equals("COSA (Coordinator of Student Activities)") ||
+                        d.equals("Guidance Counselors") ||
+                        d.equals("Health and Safety") ||
+                        d.equals("Support Staff") ||
+                        d.equals("Teachers"))).toArray(String[]::new);
+        for (int i = 0; i < departments.length; i++) {
+            System.out.println("\"INSERT INTO Departments ( department_id, department_name ) VALUES ( " + (i + 1) + ", '" + departments[i] + "' )\";");
+        }
+        return departments;
     }
 
     public static ArrayList<String> getFileData(String fileName) {
