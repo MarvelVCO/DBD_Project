@@ -66,6 +66,16 @@ public class Main {
         return departments;
     }
 
+    public static void teachers(int n) {
+        ArrayList<String> teachers = getFileData("src/teachernames.csv");
+        String[] teacherNames = teachers.get(0).split(",");
+        String[] departmentNames = teachers.get(1).split(",");
+        for (int i = 0; i < teacherNames.length; i++) {
+            System.out.println("(" + teacherNames[i] + ") , (" + departmentNames[i] + ")");
+        }
+
+    }
+
     public static ArrayList<String> getFileData(String fileName) {
         ArrayList<String> fileData = new ArrayList<String>();
         try {
