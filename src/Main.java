@@ -1,10 +1,12 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        ArrayList<String> teachers = getFileData("src/teachernames.txt");
         create_database();
     }
 
@@ -43,6 +45,16 @@ public class Main {
             last_name = last_name.substring(0, 1).toUpperCase() + last_name.substring(1);
             System.out.println("sqlite3 DB \"INSERT INTO Students ( first_name, last_name ) VALUES ( '" + first_name + "', '" + last_name + "' )\";");
         }
+    }
+
+    public static void teachers(int n) {
+        ArrayList<String> teachers = getFileData("src/teachernames.csv");
+        String[] teacherNames = teachers.get(0).split(",");
+        String[] departmentNames = teachers.get(1).split(",");
+        for (int i = 0; i < teacherNames.length; i++) {
+            System.out.println("(" + teacherNames[i] + ") , (" + departmentNames[i] + ")");
+        }
+
     }
 
     public static ArrayList<String> getFileData(String fileName) {
