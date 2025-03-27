@@ -6,10 +6,11 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
+    static ArrayList<String> departments;
     public static void main(String[] args) {
         ArrayList<String> teachers = getFileData("src/teachernames.csv");
         create_database();
-        String[] departments = generate_departments(teachers);
+        departments = generate_departments(teachers);
     }
 
     public static void create_database() {
@@ -49,7 +50,7 @@ public class Main {
         }
     }
 
-    public static String[] generate_departments(ArrayList<String> teachers) {
+    public static ArrayList<String> generate_departments(ArrayList<String> teachers) {
         String[] departments = teachers.get(1).split(",");
         departments = Arrays.stream(departments).distinct().toArray(String[]::new);
         departments = Arrays.stream(departments).filter(d ->
@@ -63,15 +64,24 @@ public class Main {
         for (int i = 0; i < departments.length; i++) {
             System.out.println("\"INSERT INTO Departments ( department_id, department_name ) VALUES ( " + (i + 1) + ", '" + departments[i] + "' )\";");
         }
-        return departments;
+        return new ArrayList<String>(Arrays.asList(departments));
     }
 
     public static void teachers(int n) {
         ArrayList<String> teachers = getFileData("src/teachernames.csv");
         String[] teacherNames = teachers.get(0).split(",");
         String[] departmentNames = teachers.get(1).split(",");
-        for (int i = 0; i < teacherNames.length; i++) {
-            System.out.println("(" + teacherNames[i] + ") , (" + departmentNames[i] + ")");
+        int skippedTeachers = 0;
+        for (int i = 0; i < teacherNames.length || i < n; i++) {
+            String[] teacherSplit = teacherNames[i].split(" ");
+            String teacherFirstName = teacherSplit[0];
+            String teacherLastName = teacherSplit[teacherSplit.length-1];
+            int departmentId = departments.indexOf(departmentNames[i]);
+            if (departmentId == -1) {
+                skippedTeachers += 1;
+                continue;
+            }
+            System.out.println("INSERT INTO Teachers ( first_name, last_name, teacher_id, department_id ) VALUES ( '" + teacherFirstName + "', '" + teacherLastName + "', " + (i-skippedTeachers+1) + " , " + departmentId + ",) ;");
         }
 
     }
