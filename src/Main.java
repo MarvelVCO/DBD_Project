@@ -66,7 +66,7 @@ public class Main {
         return departments;
     }
 
-    public static void teachers(int n) {
+    public static void generate_teachers(int n) {
         ArrayList<String> teachers = getFileData("src/teachernames.csv");
         String[] teacherNames = teachers.get(0).split(",");
         String[] departmentNames = teachers.get(1).split(",");
