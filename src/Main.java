@@ -8,16 +8,9 @@ import java.util.Scanner;
 public class Main {
     static ArrayList<String> departments;
     public static void main(String[] args) {
-//        ArrayList<String> teachers = getFileData("src/teachernames.csv");
-//        create_database();
-//        departments = generate_departments(teachers);
-        ArrayList<String> courses = getFileData("src/coursenames.csv");
-        String[][] courses2 = courses.stream().map(d -> Arrays.stream(d.split(",")).toArray(String[]::new)).toArray(String[][]::new);
-        for (int i = 0; i < courses2.length; i++) {
-            for (int j = 0; j < courses2[i].length; j++) {
-                System.out.println(courses2[i][0] + "," + courses2[i][j] + ",");
-            }
-        }
+        ArrayList<String> teachers = getFileData("src/teachernames.csv");
+        create_database();
+        departments = generate_departments(teachers);
 
     }
 
