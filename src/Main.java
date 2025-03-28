@@ -3,10 +3,12 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
     static ArrayList<String> departments;
+    static String[] assignmentTypes = {"Classwork", "Homework", "Quiz", "Exam", "Project"};
     static ArrayList<String> course_types;
     static ArrayList<String> courses;
     static ArrayList<String> teachers;
@@ -91,7 +93,23 @@ public class Main {
         }
     }
 
-    public static void generateTeachers(int n) {
+    public static ArrayList<String> generate_assignments(int n) {
+        for (int i = 0; i < assignmentTypes.length; i++) {
+            System.out.println("INSERT INTO Assignment_types ( type_id , type_name ) VALUES (" + (i + 1) + ", '" + assignmentTypes[i] + "');");
+        }
+
+        ArrayList<String> assignments = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            String assignmentName = "Assignment " + (i + 1);
+            assignments.add(assignmentName);
+            int assignmentTypeInt = (int) (Math.random() * assignmentTypes.length) + 1;
+            System.out.println("INSERT INTO Assignments ( assignment_name, assignment_id, type_id ) VALUES ( '" + assignmentName + "', " + (i + 1) + ", " + assignmentTypeInt + ");");
+        }
+        return assignments;
+    }
+
+    public static void generate_teachers(int n) {
         ArrayList<String> teachers = getFileData("src/teachernames.csv");
         String[] teacherNames = teachers.get(0).split(",");
         String[] departmentNames = teachers.get(1).split(",");
