@@ -9,12 +9,12 @@ public class Main {
     static ArrayList<String> departments;
     public static void main(String[] args) {
         ArrayList<String> teachers = getFileData("src/teachernames.csv");
-        create_database();
-        departments = generate_departments(teachers);
+        createDatabase();
+        departments = generateDepartments(teachers);
 
     }
 
-    public static void create_database() {
+    public static void createDatabase() {
         System.out.println("CREATE TABLE Students ( first_name varchar(255), last_name varchar(255), student_id integer Primary Key );");
         System.out.println("CREATE TABLE Courses ( course_name varchar(255), type_id integer, course_id integer PRIMARY KEY, FOREIGN KEY (type_id) REFERENCES Course_types(type_id) );");
         System.out.println("CREATE TABLE Course_types ( type_name varchar(255), type_id integer PRIMARY KEY );");
@@ -27,7 +27,7 @@ public class Main {
         System.out.println("CREATE TABLE Assignments ( assignment_name varchar(255), assignment_id integer PRIMARY KEY, type_id integer, FOREIGN KEY (type_id) REFERENCES assignment_types(type_id) );");
     }
 
-    public static void drop_database() {
+    public static void dropDatabase() {
         System.out.println("DROP TABLE Students;");
         System.out.println("DROP TABLE Courses;");
         System.out.println("DROP TABLE Course_types;");
@@ -40,7 +40,7 @@ public class Main {
         System.out.println("DROP TABLE Assignments;");
     }
 
-    public static void generate_students(int n) {
+    public static void generateStudents(int n) {
         ArrayList<String> students = getFileData("src/names.txt");
         for (int i = 0; i < n; i++) {
             String first_name = students.get((int) (Math.random() * students.size()));
@@ -51,7 +51,7 @@ public class Main {
         }
     }
 
-    public static ArrayList<String> generate_departments(ArrayList<String> teachers) {
+    public static ArrayList<String> generateDepartments(ArrayList<String> teachers) {
         String[] departments = teachers.get(1).split(",");
         departments = Arrays.stream(departments).distinct().toArray(String[]::new);
         departments = Arrays.stream(departments).filter(d ->
@@ -67,8 +67,14 @@ public class Main {
         }
         return new ArrayList<String>(Arrays.asList(departments));
     }
+//    public static ArrayList<String> generateCourseTypes() {
+//
+//    }
+//    public static void generateCourses() {
+//
+//    }
 
-    public static void generate_teachers(int n) {
+    public static void generateTeachers(int n) {
         ArrayList<String> teachers = getFileData("src/teachernames.csv");
         String[] teacherNames = teachers.get(0).split(",");
         String[] departmentNames = teachers.get(1).split(",");
