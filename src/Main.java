@@ -7,11 +7,19 @@ import java.util.Scanner;
 
 public class Main {
     static ArrayList<String> departments;
-    public static void main(String[] args) {
-        ArrayList<String> teachers = getFileData("src/teachernames.csv");
-        createDatabase();
-        departments = generateDepartments(teachers);
+    static ArrayList<String> course_types;
+    static ArrayList<String> courses;
+    static ArrayList<String> teachers;
 
+
+    public static void main(String[] args) {
+        dropDatabase();
+        createDatabase();
+        courses = getFileData("src/coursenames.csv");
+        teachers = getFileData("src/teachernames.csv");
+        departments = generateDepartments();
+        course_types = generateCourseTypes();
+        generateCourses();
     }
 
     public static void createDatabase() {
@@ -47,11 +55,11 @@ public class Main {
             String last_name = students.get((int) (Math.random() * students.size()));
             first_name = first_name.substring(0, 1).toUpperCase() + first_name.substring(1);
             last_name = last_name.substring(0, 1).toUpperCase() + last_name.substring(1);
-            System.out.println("\"INSERT INTO Students ( first_name, last_name, student_id ) VALUES ( '" + first_name + "', '" + last_name + "', " + (i + 1) + " )\";");
+            System.out.println("INSERT INTO Students ( first_name, last_name, student_id ) VALUES ( '" + first_name + "', '" + last_name + "', " + (i + 1) + " );");
         }
     }
 
-    public static ArrayList<String> generateDepartments(ArrayList<String> teachers) {
+    public static ArrayList<String> generateDepartments() {
         String[] departments = teachers.get(1).split(",");
         departments = Arrays.stream(departments).distinct().toArray(String[]::new);
         departments = Arrays.stream(departments).filter(d ->
@@ -63,16 +71,25 @@ public class Main {
                         d.equals("Support Staff") ||
                         d.equals("Teachers"))).toArray(String[]::new);
         for (int i = 0; i < departments.length; i++) {
-            System.out.println("\"INSERT INTO Departments ( department_id, department_name ) VALUES ( " + (i + 1) + ", '" + departments[i] + "' )\";");
+            System.out.println("INSERT INTO Departments ( department_id, department_name ) VALUES ( " + (i + 1) + ", '" + departments[i] + "' );");
         }
         return new ArrayList<String>(Arrays.asList(departments));
     }
-//    public static ArrayList<String> generateCourseTypes() {
-//
-//    }
-//    public static void generateCourses() {
-//
-//    }
+    public static ArrayList<String> generateCourseTypes() {
+        String[] duplicatesIncludedCourseTypes = courses.stream().map(c -> c.split(",")[2]).toArray(String[]::new);
+        String[] courseTypes = Arrays.stream(duplicatesIncludedCourseTypes).distinct().toArray(String[]::new);
+        for (int i = 0; i < courseTypes.length; i++) {
+            System.out.println("INSERT INTO Course_types ( type_id, type_name ) VALUES ( " + (i + 1) + ", '" + courseTypes[i] + "' );");
+        }
+        return new ArrayList<String>(Arrays.asList(courseTypes));
+    }
+
+    public static void generateCourses() {
+        for (int i = 0; i < courses.size(); i++) {
+            String[] currentCourse = courses.get(i).split(",");
+            System.out.println("INSERT INTO courses ( course_id, course_name, type_id ) VALUES ( " + (i + 1) + ", '" + currentCourse[1] + "', " + (course_types.indexOf(currentCourse[2]) + 1) + " );");
+        }
+    }
 
     public static void generateTeachers(int n) {
         ArrayList<String> teachers = getFileData("src/teachernames.csv");

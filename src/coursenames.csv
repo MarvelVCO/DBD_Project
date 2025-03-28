@@ -1,4 +1,3 @@
-Department,Class,Class_type
 Biology,Anatomy,Elective
 Biology,AP Biology,AP
 Biology,AP Environmental,AP
@@ -49,18 +48,18 @@ English,Yearbook,Elective
 English,The Survey (Tech's Student Newspaper),AP
 Health & PE,Health Education,Elective
 Health & PE,Physical Education,Elective
-Languages Other Than English (LOTE),Chinese,Regents
-Languages Other Than English (LOTE),AP Chinese Language and Culture,AP
-Languages Other Than English (LOTE),French,Regents
-Languages Other Than English (LOTE),AP French Language and Culture,AP
-Languages Other Than English (LOTE),German,Regents
-Languages Other Than English (LOTE),AP German Language and Culture,AP
-Languages Other Than English (LOTE),Italian,Regents
-Languages Other Than English (LOTE),AP Italian Language and Culture,AP
-Languages Other Than English (LOTE),Spanish,Regents
-Languages Other Than English (LOTE),Spanish IV - Pre-AP,Elective
-Languages Other Than English (LOTE),AP Spanish Language and Culture,AP
-Languages Other Than English (LOTE),AP Spanish Literature and Culture,AP
+World Languages & ENL,Chinese,Regents
+World Languages & ENL,AP Chinese Language and Culture,AP
+World Languages & ENL,French,Regents
+World Languages & ENL,AP French Language and Culture,AP
+World Languages & ENL,German,Regents
+World Languages & ENL,AP German Language and Culture,AP
+World Languages & ENL,Italian,Regents
+World Languages & ENL,AP Italian Language and Culture,AP
+World Languages & ENL,Spanish,Regents
+World Languages & ENL,Spanish IV - Pre-AP,Elective
+World Languages & ENL,AP Spanish Language and Culture,AP
+World Languages & ENL,AP Spanish Literature and Culture,AP
 Mathematics,Common Core Algebra,Regents
 Mathematics,Common Core Geometry,Regents
 Mathematics,Common Core Algebra II,Regents
