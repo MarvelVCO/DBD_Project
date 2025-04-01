@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Array;
+import java.security.spec.RSAOtherPrimeInfo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -9,9 +10,10 @@ import java.util.Scanner;
 public class Main {
     static ArrayList<String> departments;
     static String[] assignmentTypes = {"Classwork", "Homework", "Quiz", "Exam", "Project"};
-    static ArrayList<String> course_types;
+    static ArrayList<String> courseTypes;
     static ArrayList<String> courses;
     static ArrayList<String> teachers;
+    static ArrayList<String> students;
 
 
     public static void main(String[] args) {
@@ -20,7 +22,7 @@ public class Main {
         courses = getFileData("src/coursenames.csv");
         teachers = getFileData("src/teachernames.csv");
         departments = generateDepartments();
-        course_types = generateCourseTypes();
+        courseTypes = generateCourseTypes();
         generateCourses();
     }
 
@@ -51,12 +53,14 @@ public class Main {
     }
 
     public static void generateStudents(int n) {
-        ArrayList<String> students = getFileData("src/names.txt");
+        ArrayList<String> studentNames = getFileData("src/names.txt");
+        students = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            String first_name = students.get((int) (Math.random() * students.size()));
-            String last_name = students.get((int) (Math.random() * students.size()));
+            String first_name = studentNames.get((int) (Math.random() * studentNames.size()));
+            String last_name = studentNames.get((int) (Math.random() * studentNames.size()));
             first_name = first_name.substring(0, 1).toUpperCase() + first_name.substring(1);
             last_name = last_name.substring(0, 1).toUpperCase() + last_name.substring(1);
+            students.add(first_name + " " + last_name);
             System.out.println("INSERT INTO Students ( first_name, last_name, student_id ) VALUES ( '" + first_name + "', '" + last_name + "', " + (i + 1) + " );");
         }
     }
@@ -89,11 +93,11 @@ public class Main {
     public static void generateCourses() {
         for (int i = 0; i < courses.size(); i++) {
             String[] currentCourse = courses.get(i).split(",");
-            System.out.println("INSERT INTO courses ( course_id, course_name, type_id ) VALUES ( " + (i + 1) + ", '" + currentCourse[1] + "', " + (course_types.indexOf(currentCourse[2]) + 1) + " );");
+            System.out.println("INSERT INTO courses ( course_id, course_name, type_id ) VALUES ( " + (i + 1) + ", '" + currentCourse[1] + "', " + (courseTypes.indexOf(currentCourse[2]) + 1) + " );");
         }
     }
 
-    public static ArrayList<String> generate_assignments(int n) {
+    public static ArrayList<String> generateAssignments(int n) {
         for (int i = 0; i < assignmentTypes.length; i++) {
             System.out.println("INSERT INTO Assignment_types ( type_id , type_name ) VALUES (" + (i + 1) + ", '" + assignmentTypes[i] + "');");
         }
@@ -109,7 +113,7 @@ public class Main {
         return assignments;
     }
 
-    public static void generate_teachers(int n) {
+    public static void generateTeachers(int n) {
         ArrayList<String> teachers = getFileData("src/teachernames.csv");
         String[] teacherNames = teachers.get(0).split(",");
         String[] departmentNames = teachers.get(1).split(",");
@@ -125,8 +129,20 @@ public class Main {
             }
             System.out.println("INSERT INTO Teachers ( first_name, last_name, teacher_id, department_id ) VALUES ( '" + teacherFirstName + "', '" + teacherLastName + "', " + (i-skippedTeachers+1) + " , " + departmentId + ",) ;");
         }
-
     }
+
+//    public static void generateClasses() {
+//        int class_id = 1;
+//
+//        for (int period = 1; period <= 10; period++) {
+//        }
+//        for (int teacher = 0; teacher < teachers.size(); teacher++) {
+//            for (int course = 0; course < 5; course++) {
+//                System.out.println("INSERT INTO Classes ( class_id, course_id, class_period, teacher_id, classroom_id ) VALUES ( " + class_id + ", " + (course + 1) + ", " + 1 + ", " + teacher_id + ", " + (i + 1) + ") ;");
+//                class_id++;
+//            }
+//        }
+//    }
 
     public static ArrayList<String> getFileData(String fileName) {
         ArrayList<String> fileData = new ArrayList<String>();
