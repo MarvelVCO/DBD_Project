@@ -14,6 +14,7 @@ public class Main {
     static ArrayList<String> courses;
     static ArrayList<String> teachers;
     static ArrayList<String> students;
+    static ArrayList<String> classrooms;
 
 
     public static void main(String[] args) {
@@ -24,6 +25,7 @@ public class Main {
         departments = generateDepartments();
         courseTypes = generateCourseTypes();
         generateCourses();
+        generateClassrooms(720);
     }
 
     public static void createDatabase() {
@@ -31,7 +33,8 @@ public class Main {
         System.out.println("CREATE TABLE Courses ( course_name varchar(255), type_id integer, course_id integer PRIMARY KEY, FOREIGN KEY (type_id) REFERENCES Course_types(type_id) );");
         System.out.println("CREATE TABLE Course_types ( type_name varchar(255), type_id integer PRIMARY KEY );");
         System.out.println("CREATE TABLE Teachers ( first_name varchar(255), last_name varchar(255), teacher_id integer PRIMARY KEY, department_id integer, FOREIGN KEY (department_id) REFERENCES departments(department_id) );");
-        System.out.println("CREATE TABLE Classes ( course_id integer, class_time date, teacher_id integer, classroom varchar(255), class_id integer PRIMARY KEY, FOREIGN KEY (course_id) references Courses(course_id), FOREIGN KEY (teacher_id) references Teachers(teacher_id) );");
+        System.out.println("CREATE TABLE Classrooms ( classroom_id integer, classroom_name varchar(255), classroom_id integer PRIMARY KEY );");
+        System.out.println("CREATE TABLE Classes ( course_id integer, class_time date, teacher_id integer, classroom_id integer, class_id integer PRIMARY KEY, FOREIGN KEY (course_id) references Courses(course_id), FOREIGN KEY (teacher_id) references Teachers(teacher_id), FOREIGN EY (classroom_id) references Classrooms(classroom_id) );");
         System.out.println("CREATE TABLE Grades ( assignment_id integer, student_id integer, grade float, FOREIGN KEY ( assignment_id ) REFERENCES Assignments( assignment_id ), FOREIGN KEY ( student_id) REFERENCES Students( student_id) );");
         System.out.println("CREATE TABLE Assignment_types ( type_id integer PRIMARY KEY, type_name varchar(255) );");
         System.out.println("CREATE TABLE Departments ( department_id integer PRIMARY KEY, department_name varchar(255) );");
@@ -44,6 +47,7 @@ public class Main {
         System.out.println("DROP TABLE Courses;");
         System.out.println("DROP TABLE Course_types;");
         System.out.println("DROP TABLE Teachers;");
+        System.out.println("DROP TABLE Classrooms;");
         System.out.println("DROP TABLE Classes;");
         System.out.println("DROP TABLE Grades;");
         System.out.println("DROP TABLE Assignment_types;");
@@ -128,6 +132,46 @@ public class Main {
                 continue;
             }
             System.out.println("INSERT INTO Teachers ( first_name, last_name, teacher_id, department_id ) VALUES ( '" + teacherFirstName + "', '" + teacherLastName + "', " + (i-skippedTeachers+1) + " , " + departmentId + ",) ;");
+        }
+    }
+
+    // Max 720, closer to 720 is worse
+    public static void generateClassrooms(int n) {
+        classrooms = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            boolean unique = false;
+            while (!unique) {
+                int floor = (int) (Math.random() * 9);
+                String floorStr;
+                if (floor == 0) {
+                    floorStr = "B";
+                } else {
+                    floorStr = String.valueOf(floor);
+                }
+                int sideInt = (int) (Math.random() * 4);
+                String sideStr = "";
+                switch (sideInt) {
+                    case 0:
+                        sideStr = "N";
+                        break;
+                    case 1:
+                        sideStr = "E";
+                        break;
+                    case 2:
+                        sideStr = "S";
+                        break;
+                    case 3:
+                        sideStr = "W";
+                        break;
+                }
+                String roomStr = String.valueOf((int) (Math.random() * 20 + 1));
+                String className = floorStr + sideStr + roomStr;
+                unique = !classrooms.contains(className);
+                if (unique) {
+                    System.out.println("INSERT INTO Classrooms ( classroom_id, classroom_name ) VALUES ( " + (i + 1) + ", '" + className + "') ;");
+                    classrooms.add(className);
+                }
+            }
         }
     }
 
