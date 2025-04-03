@@ -2,10 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Array;
 import java.security.spec.RSAOtherPrimeInfo;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     static ArrayList<String> departments;
@@ -24,6 +21,7 @@ public class Main {
         departments = generateDepartments();
         courseTypes = generateCourseTypes();
         generateCourses();
+//        generateClasses();
     }
 
     public static void createDatabase() {
@@ -133,13 +131,23 @@ public class Main {
 
 //    public static void generateClasses() {
 //        int class_id = 1;
+//        Map<Integer, Integer[]> courses_to_periods = Map.of();
+//        for (int teacher = 1; teacher <= teachers.size(); teacher++) {
+//            for (int period = 1; period <= 10; period++) {
+//                for (int course_count = 1; course_count <= 5; course_count++) {
+//                    boolean valid_class = false;
+//                    while (!valid_class) {
+//                        int course = (int) (1 + Math.random() * courses.size());
+//                        int finalPeriod = period;
+//                        if (!courses_to_periods.containsKey(course)) {
+//                            if (Arrays.stream(courses_to_periods.get(course)).noneMatch(p -> p == finalPeriod)) {
 //
-//        for (int period = 1; period <= 10; period++) {
-//        }
-//        for (int teacher = 0; teacher < teachers.size(); teacher++) {
-//            for (int course = 0; course < 5; course++) {
-//                System.out.println("INSERT INTO Classes ( class_id, course_id, class_period, teacher_id, classroom_id ) VALUES ( " + class_id + ", " + (course + 1) + ", " + 1 + ", " + teacher_id + ", " + (i + 1) + ") ;");
-//                class_id++;
+//                            }
+//                        }
+//                    }
+//                    System.out.println("INSERT INTO Classes ( class_id, course_id, class_period, teacher_id, classroom_id ) VALUES ( " + class_id + ", " + course + ", " + period + ", " + teacher + ", " + "temp" + ") ;");
+//                    class_id++;
+//                }
 //            }
 //        }
 //    }
