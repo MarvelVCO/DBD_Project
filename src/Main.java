@@ -40,17 +40,17 @@ public class Main {
     }
 
     public static void dropDatabase() {
-        System.out.println("DROP TABLE Students;");
-        System.out.println("DROP TABLE Courses;");
-        System.out.println("DROP TABLE Course_types;");
-        System.out.println("DROP TABLE Teachers;");
-        System.out.println("DROP TABLE Classrooms;");
-        System.out.println("DROP TABLE Classes;");
-        System.out.println("DROP TABLE Grades;");
-        System.out.println("DROP TABLE Assignment_types;");
-        System.out.println("DROP TABLE Departments;");
-        System.out.println("DROP TABLE Rosters;");
-        System.out.println("DROP TABLE Assignments;");
+        System.out.println("DROP TABLE IF EXISTS Students;");
+        System.out.println("DROP TABLE IF EXISTS Courses;");
+        System.out.println("DROP TABLE IF EXISTS Course_types;");
+        System.out.println("DROP TABLE IF EXISTS Teachers;");
+        System.out.println("DROP TABLE IF EXISTS Classrooms;");
+        System.out.println("DROP TABLE IF EXISTS Classes;");
+        System.out.println("DROP TABLE IF EXISTS Grades;");
+        System.out.println("DROP TABLE IF EXISTS Assignment_types;");
+        System.out.println("DROP TABLE IF EXISTS Departments;");
+        System.out.println("DROP TABLE IF EXISTS Rosters;");
+        System.out.println("DROP TABLE IF EXISTS Assignments;");
     }
 
     public static void generateStudents(int n) {
