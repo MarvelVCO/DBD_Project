@@ -22,7 +22,8 @@ public class Main {
         departments = generateDepartments();
         courseTypes = generateCourseTypes();
         generateCourses();
-//        generateClasses();
+        generateClassrooms(720);
+        generateClasses();
     }
 
     public static void createDatabase() {
@@ -174,22 +175,56 @@ public class Main {
 
 //    public static void generateClasses() {
 //        int class_id = 1;
-//        Map<Integer, Integer[]> courses_to_periods = Map.of();
+//        Map<Integer, ArrayList<Integer>> courses_to_periods = new HashMap<>(Map.of());
+//        Map<Integer, ArrayList<String>> rooms_to_periods = new HashMap<>(Map.of());
+//
 //        for (int teacher = 1; teacher <= teachers.size(); teacher++) {
 //            for (int period = 1; period <= 10; period++) {
 //                for (int course_count = 1; course_count <= 5; course_count++) {
-//                    boolean valid_class = false;
-//                    while (!valid_class) {
+//                    boolean invalid_class_period = true;
+//                    boolean invalid_classroom = true;
+//                    while (invalid_class_period && invalid_classroom) {
 //                        int course = (int) (1 + Math.random() * courses.size());
+//                        int classroom = (int) (1 + Math.random() * classrooms.size());
 //                        int finalPeriod = period;
-//                        if (!courses_to_periods.containsKey(course)) {
-//                            if (Arrays.stream(courses_to_periods.get(course)).noneMatch(p -> p == finalPeriod)) {
+//                        String final_classroom = classrooms.get(classroom - 1);
 //
+//                        if (rooms_to_periods.containsKey(classroom)) {
+//                            if (rooms_to_periods.get(classroom).stream().noneMatch(r -> r.equals(final_classroom))) {
+//                                ArrayList<String> classes = rooms_to_periods.get(classroom);
+//                                classes.add(final_classroom);
+//                                rooms_to_periods.remove(period);
+//                                rooms_to_periods.put(period, classes);
+//                                invalid_classroom = false;
+//                            }
+//                        }
+//                        else {
+//                            ArrayList<String> classroom_list = new ArrayList<>();
+//                            classroom_list.add(final_classroom);
+//                            rooms_to_periods.put(period, classroom_list);
+//                            invalid_classroom = false;
+//                        }
+//                        if (!invalid_classroom) {
+//                            if (courses_to_periods.containsKey(course)) {
+//                                if (courses_to_periods.get(course).stream().noneMatch(p -> p == finalPeriod)) {
+//                                    ArrayList<Integer> periods = courses_to_periods.get(course);
+//                                    periods.add(period);
+//                                    courses_to_periods.remove(course);
+//                                    courses_to_periods.put(course, periods);
+//                                    System.out.println("INSERT INTO Classes ( class_id, course_id, class_period, teacher_id, classroom_id ) VALUES ( " + class_id + ", " + course + ", " + period + ", " + teacher + ", '" + final_classroom + "' );");
+//                                    class_id++;
+//                                    invalid_class_period = false;
+//                                }
+//                            } else {
+//                                System.out.println("INSERT INTO Classes ( class_id, course_id, class_period, teacher_id, classroom_id ) VALUES ( " + class_id + ", " + course + ", " + period + ", " + teacher + ", '" + final_classroom + "' );");
+//                                class_id++;
+//                                ArrayList<Integer> period_list = new ArrayList<>();
+//                                period_list.add(period);
+//                                courses_to_periods.put(course, period_list);
+//                                invalid_class_period = false;
 //                            }
 //                        }
 //                    }
-//                    System.out.println("INSERT INTO Classes ( class_id, course_id, class_period, teacher_id, classroom_id ) VALUES ( " + class_id + ", " + course + ", " + period + ", " + teacher + ", " + "temp" + ") ;");
-//                    class_id++;
 //                }
 //            }
 //        }
