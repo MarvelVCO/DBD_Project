@@ -23,35 +23,34 @@ public class Main {
         courseTypes = generateCourseTypes();
         generateCourses();
         generateClassrooms(720);
-        generateClasses();
+        //generateClasses();
     }
 
     public static void createDatabase() {
         System.out.println("CREATE TABLE Students ( first_name varchar(255), last_name varchar(255), student_id integer Primary Key );");
-        System.out.println("CREATE TABLE Courses ( course_name varchar(255), type_id integer, course_id integer PRIMARY KEY, FOREIGN KEY (type_id) REFERENCES Course_types(type_id) );");
-        System.out.println("CREATE TABLE Course_types ( type_name varchar(255), type_id integer PRIMARY KEY );");
-        System.out.println("CREATE TABLE Teachers ( first_name varchar(255), last_name varchar(255), teacher_id integer PRIMARY KEY, department_id integer, FOREIGN KEY (department_id) REFERENCES departments(department_id) );");
-        System.out.println("CREATE TABLE Classrooms ( classroom_id integer, classroom_name varchar(255), classroom_id integer PRIMARY KEY );");
-        System.out.println("CREATE TABLE Classes ( course_id integer, class_time date, teacher_id integer, classroom_id integer, class_id integer PRIMARY KEY, FOREIGN KEY (course_id) references Courses(course_id), FOREIGN KEY (teacher_id) references Teachers(teacher_id), FOREIGN EY (classroom_id) references Classrooms(classroom_id) );");
-        System.out.println("CREATE TABLE Grades ( assignment_id integer, student_id integer, grade float, FOREIGN KEY ( assignment_id ) REFERENCES Assignments( assignment_id ), FOREIGN KEY ( student_id) REFERENCES Students( student_id) );");
-        System.out.println("CREATE TABLE Assignment_types ( type_id integer PRIMARY KEY, type_name varchar(255) );");
+        System.out.println("CREATE TABLE CourseTypes ( type_name varchar(255), type_id integer PRIMARY KEY );");
+        System.out.println("CREATE TABLE Classrooms ( classroom_name varchar(255), classroom_id integer PRIMARY KEY );");
+        System.out.println("CREATE TABLE AssignmentTypes ( type_id integer PRIMARY KEY, type_name varchar(255) );");
         System.out.println("CREATE TABLE Departments ( department_id integer PRIMARY KEY, department_name varchar(255) );");
-        System.out.println("CREATE TABLE Rosters ( student_id integer, class_id integer, FOREIGN KEY (student_id) REFERENCES Students(student_id), FOREIGN KEY (class_id) REFERENCES Classes(class_id) );");
-        System.out.println("CREATE TABLE Assignments ( assignment_name varchar(255), assignment_id integer PRIMARY KEY, type_id integer, FOREIGN KEY (type_id) REFERENCES assignment_types(type_id) );");
-    }
+        System.out.println("CREATE TABLE Assignments ( assignment_name varchar(255), assignment_id integer PRIMARY KEY, type_id integer, FOREIGN KEY (type_id) REFERENCES AssignmentTypes(type_id) );");
+        System.out.println("CREATE TABLE Courses ( course_name varchar(255), type_id integer, course_id integer PRIMARY KEY, FOREIGN KEY (type_id) REFERENCES CourseTypes(type_id) );");
+        System.out.println("CREATE TABLE Teachers ( first_name varchar(255), last_name varchar(255), teacher_id integer PRIMARY KEY, department_id integer, FOREIGN KEY (department_id) REFERENCES Departments(department_id) );");
+        System.out.println("CREATE TABLE Classes ( course_id integer, class_time date, teacher_id integer, classroom_id integer, class_id integer PRIMARY KEY, FOREIGN KEY (course_id) references Courses(course_id), FOREIGN KEY (teacher_id) references Teachers(teacher_id), FOREIGN KEY (classroom_id) references Classrooms(classroom_id) );");
+        System.out.println("CREATE TABLE Grades ( assignment_id integer, student_id integer, grade float, FOREIGN KEY ( assignment_id ) REFERENCES Assignments( assignment_id ), FOREIGN KEY ( student_id) REFERENCES Students( student_id) );");
+        System.out.println("CREATE TABLE Rosters ( student_id integer, class_id integer, FOREIGN KEY (student_id) REFERENCES Students(student_id), FOREIGN KEY (class_id) REFERENCES Classes(class_id) );");}
 
     public static void dropDatabase() {
-        System.out.println("DROP TABLE IF EXISTS Students;");
-        System.out.println("DROP TABLE IF EXISTS Courses;");
-        System.out.println("DROP TABLE IF EXISTS Course_types;");
-        System.out.println("DROP TABLE IF EXISTS Teachers;");
-        System.out.println("DROP TABLE IF EXISTS Classrooms;");
-        System.out.println("DROP TABLE IF EXISTS Classes;");
-        System.out.println("DROP TABLE IF EXISTS Grades;");
-        System.out.println("DROP TABLE IF EXISTS Assignment_types;");
-        System.out.println("DROP TABLE IF EXISTS Departments;");
         System.out.println("DROP TABLE IF EXISTS Rosters;");
+        System.out.println("DROP TABLE IF EXISTS Grades;");
+        System.out.println("DROP TABLE IF EXISTS Classes;");
+        System.out.println("DROP TABLE IF EXISTS Teachers;");
+        System.out.println("DROP TABLE IF EXISTS Courses;");
         System.out.println("DROP TABLE IF EXISTS Assignments;");
+        System.out.println("DROP TABLE IF EXISTS Departments;");
+        System.out.println("DROP TABLE IF EXISTS AssignmentTypes;");
+        System.out.println("DROP TABLE IF EXISTS Classrooms;");
+        System.out.println("DROP TABLE IF EXISTS CourseTypes;");
+        System.out.println("DROP TABLE IF EXISTS Students;");
     }
 
     public static void generateStudents(int n) {
@@ -87,7 +86,7 @@ public class Main {
         String[] duplicatesIncludedCourseTypes = courses.stream().map(c -> c.split(",")[2]).toArray(String[]::new);
         String[] courseTypes = Arrays.stream(duplicatesIncludedCourseTypes).distinct().toArray(String[]::new);
         for (int i = 0; i < courseTypes.length; i++) {
-            System.out.println("INSERT INTO Course_types ( type_id, type_name ) VALUES ( " + (i + 1) + ", '" + courseTypes[i] + "' );");
+            System.out.println("INSERT INTO CourseTypes ( type_id, type_name ) VALUES ( " + (i + 1) + ", '" + courseTypes[i] + "' );");
         }
         return new ArrayList<String>(Arrays.asList(courseTypes));
     }
@@ -95,13 +94,13 @@ public class Main {
     public static void generateCourses() {
         for (int i = 0; i < courses.size(); i++) {
             String[] currentCourse = courses.get(i).split(",");
-            System.out.println("INSERT INTO courses ( course_id, course_name, type_id ) VALUES ( " + (i + 1) + ", '" + currentCourse[1] + "', " + (courseTypes.indexOf(currentCourse[2]) + 1) + " );");
+            System.out.println("INSERT INTO Courses ( course_id, course_name, type_id ) VALUES ( " + (i + 1) + ", '" + currentCourse[1] + "', " + (courseTypes.indexOf(currentCourse[2]) + 1) + " );");
         }
     }
 
     public static ArrayList<String> generateAssignments(int n) {
         for (int i = 0; i < assignmentTypes.length; i++) {
-            System.out.println("INSERT INTO Assignment_types ( type_id , type_name ) VALUES (" + (i + 1) + ", '" + assignmentTypes[i] + "');");
+            System.out.println("INSERT INTO AssignmentTypes ( type_id , type_name ) VALUES (" + (i + 1) + ", '" + assignmentTypes[i] + "');");
         }
 
         ArrayList<String> assignments = new ArrayList<>();
