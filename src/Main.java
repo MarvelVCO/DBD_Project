@@ -23,7 +23,7 @@ public class Main {
         courseTypes = generateCourseTypes();
         generateCourses();
         generateClassrooms(720);
-        //generateClasses();
+//        generateClasses();
     }
 
     public static void createDatabase() {
@@ -172,87 +172,29 @@ public class Main {
         }
     }
 
-    public static void generateClasses() {
-        int class_id = 1;
-        Map<Integer, ArrayList<Integer>> courses_to_periods = new HashMap<>(Map.of());
-        Map<Integer, ArrayList<String>> rooms_to_periods = new HashMap<>(Map.of());
-
-        for (int teacher = 1; teacher <= teachers.getFirst().split(",").length; teacher++) {
-            for (int period = 1; period <= 10; period++) {
-                boolean invalid_class_period = true;
-                boolean invalid_classroom = true;
-                while (invalid_class_period && invalid_classroom) {
-                    int course = (int) (1 + Math.random() * courses.size());
-                    int classroom = (int) (1 + Math.random() * classrooms.size());
-                    int finalPeriod = period;
-                    invalid_class_period = true;
-                    invalid_classroom = true;
-
-                    String final_classroom = classrooms.get(classroom - 1);
-                    if (courses_to_periods.containsKey(course)) {
-                        if (rooms_to_periods.containsKey(classroom)) {
-                            if (rooms_to_periods.get(classroom).stream().noneMatch(r -> r.equals(final_classroom)) &&
-                                courses_to_periods.get(course).stream().noneMatch(p -> p == finalPeriod)) {
-                                ArrayList<String> classes = rooms_to_periods.get(classroom);
-                                classes.add(final_classroom);
-                                rooms_to_periods.remove(period);
-                                rooms_to_periods.put(period, classes);
-                                invalid_classroom = false;
-
-                                ArrayList<Integer> periods = courses_to_periods.get(course);
-                                periods.add(period);
-                                courses_to_periods.remove(course);
-                                courses_to_periods.put(course, periods);
-                                invalid_class_period = false;
-                            }
-                        } else {
-                            if (courses_to_periods.get(course).stream().noneMatch(p -> p == finalPeriod)) {
-                                ArrayList<Integer> periods = courses_to_periods.get(course);
-                                periods.add(period);
-                                courses_to_periods.remove(course);
-                                courses_to_periods.put(course, periods);
-                                invalid_class_period = false;
-
-                                ArrayList<String> classroom_list = new ArrayList<>();
-                                classroom_list.add(final_classroom);
-                                rooms_to_periods.put(period, classroom_list);
-                                invalid_classroom = false;
-                            }
-                        }
-                    } else {
-                        if (rooms_to_periods.containsKey(classroom)) {
-                            if (rooms_to_periods.get(classroom).stream().noneMatch(r -> r.equals(final_classroom))) {
-                                ArrayList<Integer> period_list = new ArrayList<>();
-                                period_list.add(period);
-                                courses_to_periods.put(course, period_list);
-                                invalid_class_period = false;
-
-                                ArrayList<String> classes = rooms_to_periods.get(classroom);
-                                classes.add(final_classroom);
-                                rooms_to_periods.remove(period);
-                                rooms_to_periods.put(period, classes);
-                                invalid_classroom = false;
-                            }
-                        } else {
-                            ArrayList<Integer> period_list = new ArrayList<>();
-                            period_list.add(period);
-                            courses_to_periods.put(course, period_list);
-                            invalid_class_period = false;
-
-                            ArrayList<String> classroom_list = new ArrayList<>();
-                            classroom_list.add(final_classroom);
-                            rooms_to_periods.put(period, classroom_list);
-                            invalid_classroom = false;
-                        }
-                    }
-                    if (!invalid_class_period && !invalid_classroom) {
-                        System.out.println("INSERT INTO Classes ( class_id, course_id, class_period, teacher_id, classroom_id ) VALUES ( " + class_id + ", " + course + ", " + period + ", " + teacher + ", '" + final_classroom + "' );");
-                        class_id++;
-                    }
-                }
-            }
-        }
-    }
+//    public static void generateClasses() {
+//        int class_id = 1;
+//        ArrayList<String> periods_to_rooms_to_courses = new ArrayList<>();
+//        for (String classroom : classrooms) {
+//            for (int period = 1; period <= 10; period++) {
+//                periods_to_rooms_to_courses.add(period + "," + classroom);
+//            }
+//        }
+//
+//        for (int i = 0; i < courses.size(); i++) {
+//            periods_to_rooms_to_courses.set(i, periods_to_rooms_to_courses.get(i) + "," + courses.get(i));
+//        }
+//
+//        for (int teacher = 1; teacher <= teachers.getFirst().split(",").length; teacher++) {
+//            for (int period  = 0; period < 10; period++) {
+//                if (class_id <= courses.size()) {
+//                    String[] course = periods_to_rooms_to_courses.get(class_id - 1).split(",");
+//                    System.out.println("INSERT INTO Classes ( class_id, course_id, class_period, teacher_id, classroom_id ) VALUES ( " + class_id + ", " + course[2] + ", " + period + ", " + teacher + ", '" + course[1] + "' );");
+//                    class_id++;
+//                }
+//            }
+//        }
+//    }
 
     public static ArrayList<String> getFileData(String fileName) {
         ArrayList<String> fileData = new ArrayList<String>();
