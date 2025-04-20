@@ -11,7 +11,7 @@ public class Main {
     static ArrayList<String> students;
     static ArrayList<String> classrooms;
     static ArrayList<String> assignments;
-
+    static HashMap<Integer, ArrayList<Integer>> classIdsByPeriod;
 
     public static void main(String[] args) {
         dropDatabase();
@@ -22,10 +22,16 @@ public class Main {
         courseTypes = generateCourseTypes();
         generateCourses();
         generateClassrooms(720);
+        classIdsByPeriod = new HashMap<>();
+        for (int i = 1; i <= 10; i++) {
+            classIdsByPeriod.put(i, new ArrayList<>());
+        }
         generateClasses();
         generateStudents(5000);
         generateAssignments(courses.size() * 15);
         generateTeachers(teachers.getFirst().split(",").length);
+        generateGrades();
+        generateRosters();
     }
 
     public static void createDatabase() {
@@ -37,9 +43,10 @@ public class Main {
         System.out.println("CREATE TABLE Assignments ( assignment_name varchar(255), assignment_id integer PRIMARY KEY, type_id integer, FOREIGN KEY (type_id) REFERENCES AssignmentTypes(type_id) );");
         System.out.println("CREATE TABLE Courses ( course_name varchar(255), type_id integer, course_id integer PRIMARY KEY, FOREIGN KEY (type_id) REFERENCES CourseTypes(type_id) );");
         System.out.println("CREATE TABLE Teachers ( first_name varchar(255), last_name varchar(255), teacher_id integer PRIMARY KEY, department_id integer, FOREIGN KEY (department_id) REFERENCES Departments(department_id) );");
-        System.out.println("CREATE TABLE Classes ( course_id integer, class_time date, teacher_id integer, classroom_id integer, class_id integer PRIMARY KEY, FOREIGN KEY (course_id) references Courses(course_id), FOREIGN KEY (teacher_id) references Teachers(teacher_id), FOREIGN KEY (classroom_id) references Classrooms(classroom_id) );");
+        System.out.println("CREATE TABLE Classes ( course_id integer, class_period integer, teacher_id integer, classroom_id integer, class_id integer PRIMARY KEY, FOREIGN KEY (course_id) references Courses(course_id), FOREIGN KEY (teacher_id) references Teachers(teacher_id), FOREIGN KEY (classroom_id) references Classrooms(classroom_id) );");
         System.out.println("CREATE TABLE Grades ( assignment_id integer, student_id integer, grade float, FOREIGN KEY ( assignment_id ) REFERENCES Assignments( assignment_id ), FOREIGN KEY ( student_id) REFERENCES Students( student_id) );");
-        System.out.println("CREATE TABLE Rosters ( student_id integer, class_id integer, FOREIGN KEY (student_id) REFERENCES Students(student_id), FOREIGN KEY (class_id) REFERENCES Classes(class_id) );");}
+        System.out.println("CREATE TABLE Rosters ( student_id integer, class_id integer, FOREIGN KEY (student_id) REFERENCES Students(student_id), FOREIGN KEY (class_id) REFERENCES Classes(class_id) );");
+    }
 
     public static void dropDatabase() {
         System.out.println("DROP TABLE IF EXISTS Rosters;");
@@ -72,7 +79,7 @@ public class Main {
         String[] departments = teachers.get(1).split(",");
         departments = Arrays.stream(departments).distinct().toArray(String[]::new);
         departments = Arrays.stream(departments).filter(d ->
-                        ! (d.equals("Brooklyn Tech Principal") ||
+                ! (d.equals("Brooklyn Tech Principal") ||
                         d.equals("Administration - Supervisors") ||
                         d.equals("COSA (Coordinator of Student Activities)") ||
                         d.equals("Guidance Counselors") ||
@@ -82,15 +89,16 @@ public class Main {
         for (int i = 0; i < departments.length; i++) {
             System.out.println("INSERT INTO Departments ( department_id, department_name ) VALUES ( " + (i + 1) + ", '" + departments[i] + "' );");
         }
-        return new ArrayList<String>(Arrays.asList(departments));
+        return new ArrayList<>(Arrays.asList(departments));
     }
+
     public static ArrayList<String> generateCourseTypes() {
         String[] duplicatesIncludedCourseTypes = courses.stream().map(c -> c.split(",")[2]).toArray(String[]::new);
         String[] courseTypes = Arrays.stream(duplicatesIncludedCourseTypes).distinct().toArray(String[]::new);
         for (int i = 0; i < courseTypes.length; i++) {
             System.out.println("INSERT INTO CourseTypes ( type_id, type_name ) VALUES ( " + (i + 1) + ", '" + courseTypes[i] + "' );");
         }
-        return new ArrayList<String>(Arrays.asList(courseTypes));
+        return new ArrayList<>(Arrays.asList(courseTypes));
     }
 
     public static void generateCourses() {
@@ -116,7 +124,6 @@ public class Main {
         }
     }
 
-    // TODO: Make sure that the index of a teacher is the id of the teacher -1
     public static void generateTeachers(int n) {
         ArrayList<String> teachers = getFileData("src/teachernames.csv");
         String[] teacherNames = teachers.get(0).split(",");
@@ -149,21 +156,13 @@ public class Main {
                     floorStr = String.valueOf(floor);
                 }
                 int sideInt = (int) (Math.random() * 4);
-                String sideStr = "";
-                switch (sideInt) {
-                    case 0:
-                        sideStr = "N";
-                        break;
-                    case 1:
-                        sideStr = "E";
-                        break;
-                    case 2:
-                        sideStr = "S";
-                        break;
-                    case 3:
-                        sideStr = "W";
-                        break;
-                }
+                String sideStr = switch (sideInt) {
+                    case 0 -> "N";
+                    case 1 -> "E";
+                    case 2 -> "S";
+                    case 3 -> "W";
+                    default -> "";
+                };
                 String roomStr = String.valueOf((int) (Math.random() * 20 + 1));
                 String className = floorStr + sideStr + roomStr;
                 unique = !classrooms.contains(className);
@@ -211,14 +210,48 @@ public class Main {
         }
     }
 
+    public static void generateGrades() {
+        // For each assignment, generate grades for some students
+        for (int assignment_id = 1; assignment_id <= assignments.size(); assignment_id++) {
+            int numberOfStudentsToGrade = 200 + (int)(Math.random() * 800);
+
+            Set<Integer> studentIds = new HashSet<>();
+            while (studentIds.size() < numberOfStudentsToGrade && studentIds.size() < students.size()) {
+                studentIds.add((int)(Math.random() * students.size()) + 1);
+            }
+
+            for (int student_id : studentIds) {
+                double grade = Math.round((Math.random() * 100) * 10.0) / 10.0;
+                System.out.println("INSERT INTO Grades ( assignment_id, student_id, grade ) VALUES ( " +
+                        assignment_id + ", " + student_id + ", " + grade + " );");
+            }
+        }
+    }
+
+    public static void generateRosters() {
+        for (int student_id = 1; student_id <= students.size(); student_id++) {
+            for (int period = 1; period <= 10; period++) {
+                ArrayList<Integer> availableClasses = classIdsByPeriod.get(period);
+
+                if (!availableClasses.isEmpty()) {
+                    int randomIndex = (int)(Math.random() * availableClasses.size());
+                    int class_id = availableClasses.get(randomIndex);
+
+                    System.out.println("INSERT INTO Rosters ( student_id, class_id ) VALUES ( " +
+                            student_id + ", " + class_id + " );");
+                }
+            }
+        }
+    }
+
     public static ArrayList<String> getFileData(String fileName) {
-        ArrayList<String> fileData = new ArrayList<String>();
+        ArrayList<String> fileData = new ArrayList<>();
         try {
             File f = new File(fileName);
             Scanner s = new Scanner(f);
             while (s.hasNextLine()) {
                 String line = s.nextLine();
-                if (!line.equals(""))
+                if (!line.isEmpty())
                     fileData.add(line);
             }
             return fileData;
