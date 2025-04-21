@@ -30,7 +30,7 @@ public class Main {
         generateClasses();
         generateStudents(5000);
         generateAssignments();
-        generateTeachers(teachers.getFirst().split(",").length);
+        generateTeachers(teachers.get(0).split(",").length);
         generateGrades();
         generateRosters();
     }
@@ -170,20 +170,22 @@ public class Main {
                     floorStr = String.valueOf(floor);
                 }
                 String sideStr = "";
-                 switch (sideInt) {
-                     case 0:
-                         sideStr = "N";
-                         break;
-                     case 1:
-                         sideStr = "E";
-                         break;
-                     case 2:
-                         sideStr = "S";
-                         break;
-                     case 3:
-                         sideStr = "W";
-                         break;
+                int sideInt = (int) (Math.random() * 4);
+                 if (sideInt == 0) {
+                     sideStr = "N";
                  }
+
+                 if (sideInt == 1) {
+                     sideStr = "E";
+                 }
+                 if (sideInt == 2) {
+                     sideStr = "S";
+                 }
+
+                 if (sideInt == 3) {
+                     sideStr = "W";
+                 }
+
                 String roomStr = String.valueOf((int) (Math.random() * 20 + 1));
                 String className = floorStr + sideStr + roomStr;
                 unique = !classrooms.contains(className);
@@ -211,7 +213,7 @@ public class Main {
         }
         periods_to_rooms_to_courses = new ArrayList<>(Arrays.asList(periods_to_rooms_to_courses.stream().filter(a -> a.split(",").length == 3).toArray(String[]::new)));
 
-        for (int teacher = 1; teacher <= teachers.getFirst().split(",").length; teacher++) {
+        for (int teacher = 1; teacher <= teachers.get(0).split(",").length; teacher++) {
             for (int period  = 0; period < 10; period++) {
                 if (!periods_to_rooms_to_courses.isEmpty()) {
                     int random = (int) (Math.random() * periods_to_rooms_to_courses.size() - 1);
@@ -254,7 +256,7 @@ public class Main {
     public static void generateRosters() {
         for (int student_id = 1; student_id <= students.size(); student_id++) {
             for (int period = 1; period <= 10; period++) {
-                ArrayList<Integer> availableClasses = classIdsByPeriod.get(Optional.of(period));
+                ArrayList<Integer> availableClasses = classIdsByPeriod.get(period);
 
                 if (!availableClasses.isEmpty()) {
                     int randomIndex = (int)(Math.random() * availableClasses.size());
