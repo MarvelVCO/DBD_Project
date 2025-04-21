@@ -169,14 +169,21 @@ public class Main {
                 } else {
                     floorStr = String.valueOf(floor);
                 }
-                int sideInt = (int) (Math.random() * 4);
-                String sideStr = switch (sideInt) {
-                    case 0 -> "N";
-                    case 1 -> "E";
-                    case 2 -> "S";
-                    case 3 -> "W";
-                    default -> "";
-                };
+                String sideStr = "";
+                 switch (sideInt) {
+                     case 0:
+                         sideStr = "N";
+                         break;
+                     case 1:
+                         sideStr = "E";
+                         break;
+                     case 2:
+                         sideStr = "S";
+                         break;
+                     case 3:
+                         sideStr = "W";
+                         break;
+                 }
                 String roomStr = String.valueOf((int) (Math.random() * 20 + 1));
                 String className = floorStr + sideStr + roomStr;
                 unique = !classrooms.contains(className);
