@@ -4,9 +4,10 @@ import java.util.*;
 
 public class Main {
     static ArrayList<String> departments;
-    static String[] assignmentTypes = {"Classwork", "Homework", "Quiz", "Exam", "Project"};
+    static String[] assignmentTypes = {"Major", "Minor"};
     static ArrayList<String> courseTypes;
     static ArrayList<String> courses;
+    static ArrayList<String> classes;
     static ArrayList<String> teachers;
     static ArrayList<String> students;
     static ArrayList<String> classrooms;
@@ -24,11 +25,11 @@ public class Main {
         generateClassrooms(720);
         classIdsByPeriod = new HashMap<>();
         for (int i = 1; i <= 10; i++) {
-            classIdsByPeriod.put(i, new ArrayList<>());
+            classIdsByPeriod.put(Integer.valueOf(i), new ArrayList<>());
         }
         generateClasses();
         generateStudents(5000);
-        generateAssignments(courses.size() * 15);
+        generateAssignments();
         generateTeachers(teachers.getFirst().split(",").length);
         generateGrades();
         generateRosters();
@@ -108,20 +109,33 @@ public class Main {
         }
     }
 
+    public static void printAssignment(int id, int type) {
+        String assignmentName = "Assignment " + (id + 1);
+        assignments.add(assignmentName);
+        System.out.println("INSERT INTO Assignments ( assignment_name, assignment_id, type_id ) VALUES ( '" + assignmentName + "', " + (id + 1) + ", " + type + ");");
+    }
+
     // TODO: Make it do 12 minor 3 major ty very much
-    public static void generateAssignments(int n) {
+    public static void generateAssignments() {
         for (int i = 0; i < assignmentTypes.length; i++) {
             System.out.println("INSERT INTO AssignmentTypes ( type_id , type_name ) VALUES (" + (i + 1) + ", '" + assignmentTypes[i] + "');");
         }
 
         assignments = new ArrayList<>();
 
-        for (int i = 0; i < n; i++) {
-            String assignmentName = "Assignment " + (i + 1);
-            assignments.add(assignmentName);
-            int assignmentTypeInt = (int) (Math.random() * assignmentTypes.length) + 1;
-            System.out.println("INSERT INTO Assignments ( assignment_name, assignment_id, type_id ) VALUES ( '" + assignmentName + "', " + (i + 1) + ", " + assignmentTypeInt + ");");
+        int assignmentId = 1;
+
+        for (int i = 0; i < classes.size(); i++) {
+            for (int maj = 0; maj < 3; maj++) {
+                printAssignment(assignmentId, 0);
+                assignmentId++;
+            }
+            for (int min = 0; min < 12; min++) {
+                printAssignment(assignmentId, 1);
+                assignmentId++;
+            }
         }
+
     }
 
     public static void generateTeachers(int n) {
@@ -175,6 +189,7 @@ public class Main {
     }
 
     public static void generateClasses() {
+        classes = new ArrayList<>();
         int class_id = 1;
         ArrayList<String> periods_to_rooms_to_courses = new ArrayList<>();
         for (String classroom : classrooms) {
@@ -203,7 +218,9 @@ public class Main {
                     }
                     periods_to_rooms_to_courses.remove(random);
                     System.out.println(courses);
-                    System.out.println("INSERT INTO Classes ( class_id, course_id, class_period, teacher_id, classroom_id ) VALUES ( " + class_id + ", " + course_id + ", " + period + ", " + teacher + ", '" + course[1] + "' );");
+                    String printStr = "INSERT INTO Classes ( class_id, course_id, class_period, teacher_id, classroom_id ) VALUES ( " + class_id + ", " + course_id + ", " + period + ", " + teacher + ", '" + course[1] + "' );";
+                    System.out.println(printStr);
+                    courses.add(printStr);
                     class_id++;
                 }
             }
@@ -217,7 +234,7 @@ public class Main {
 
             Set<Integer> studentIds = new HashSet<>();
             while (studentIds.size() < numberOfStudentsToGrade && studentIds.size() < students.size()) {
-                studentIds.add((int)(Math.random() * students.size()) + 1);
+                studentIds.add(Integer.valueOf((int)(Math.random() * students.size()) + 1));
             }
 
             for (int student_id : studentIds) {
@@ -231,7 +248,7 @@ public class Main {
     public static void generateRosters() {
         for (int student_id = 1; student_id <= students.size(); student_id++) {
             for (int period = 1; period <= 10; period++) {
-                ArrayList<Integer> availableClasses = classIdsByPeriod.get(period);
+                ArrayList<Integer> availableClasses = classIdsByPeriod.get(Optional.of(period));
 
                 if (!availableClasses.isEmpty()) {
                     int randomIndex = (int)(Math.random() * availableClasses.size());
