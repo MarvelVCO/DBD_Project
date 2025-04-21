@@ -228,7 +228,6 @@ public class Main {
     }
 
     public static void generateGrades() {
-        // For each assignment, generate grades for some students
         for (int assignment_id = 1; assignment_id <= assignments.size(); assignment_id++) {
             int numberOfStudentsToGrade = 200 + (int)(Math.random() * 800);
 
