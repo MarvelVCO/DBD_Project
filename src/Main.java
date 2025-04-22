@@ -209,7 +209,6 @@ public class Main {
 
         for (int i = 0; i < courses.size(); i++) {
             periods_to_rooms_to_courses.set(i, periods_to_rooms_to_courses.get(i) + "," + courses.get(i).split(",")[1]);
-            System.out.println(periods_to_rooms_to_courses.get(i));
         }
         periods_to_rooms_to_courses = new ArrayList<>(Arrays.asList(periods_to_rooms_to_courses.stream().filter(a -> a.split(",").length == 3).toArray(String[]::new)));
 
@@ -226,7 +225,6 @@ public class Main {
                         }
                     }
                     periods_to_rooms_to_courses.remove(random);
-                    System.out.println(courses);
                     String printStr = "INSERT INTO Classes ( class_id, course_id, class_period, teacher_id, classroom_id ) VALUES ( " + class_id + ", " + course_id + ", " + period + ", " + teacher + ", '" + course[1] + "' );";
                     System.out.println(printStr);
                     courses.add(printStr);
