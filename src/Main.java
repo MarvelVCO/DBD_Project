@@ -28,11 +28,11 @@ public class Main {
             classIdsByPeriod.put(Integer.valueOf(i), new ArrayList<>());
         }
         generateClasses();
-//        generateStudents(5000);
-//        generateAssignments();
-//        generateTeachers(teachers.get(0).split(",").length);
-//        generateGrades();
-//        generateRosters();
+        generateStudents(5000);
+        generateAssignments();
+        generateTeachers(teachers.get(0).split(",").length);
+        generateGrades();
+        generateRosters();
     }
 
     public static void createDatabase() {
@@ -209,33 +209,26 @@ public class Main {
         int count = 0;
         while (count < periods_to_rooms_to_courses.size()) {
             for (int i = 0; i < courses.size() && count < periods_to_rooms_to_courses.size(); i++) {
-                periods_to_rooms_to_courses.set(count, periods_to_rooms_to_courses.get(i) + "," + courses.get(i).split(",")[1]);
+                periods_to_rooms_to_courses.set(count, periods_to_rooms_to_courses.get(count) + "," + courses.get(i).split(",")[1]);
                 count++;
             }
         }
 
-        for (String periodsToRoomsToCours : periods_to_rooms_to_courses) {
-            System.out.println(periodsToRoomsToCours);
-        }
-
-        periods_to_rooms_to_courses = new ArrayList<>(Arrays.asList(periods_to_rooms_to_courses.stream().filter(a -> a.split(",").length == 3).toArray(String[]::new)));
-
+        periods_to_rooms_to_courses = new ArrayList<>(Arrays.asList(periods_to_rooms_to_courses.stream().filter(a -> a.split(",").length > 2).toArray(String[]::new)));
         for (int teacher = 1; teacher <= teachers.get(0).split(",").length; teacher++) {
-            for (int period  = 0; period < 10; period++) {
+            for (int period = 1; period <= 10; period++) {
                 if (!periods_to_rooms_to_courses.isEmpty()) {
-                    int random = (int) (Math.random() * periods_to_rooms_to_courses.size() - 1);
-                    String[] course = periods_to_rooms_to_courses.get(random).split(",");
+                    String[] course = periods_to_rooms_to_courses.get(0).split(",");
                     int course_id = -1;
 
                     for (int i = 0; i < courses.size(); i++) {
-                        if (courses.get(i).split(",")[1].equals(periods_to_rooms_to_courses.get(random).split(",")[2])) {
+                        if (courses.get(i).split(",")[1].equals(periods_to_rooms_to_courses.get(0).split(",")[2])) {
                             course_id = i + 1;
                         }
                     }
-                    periods_to_rooms_to_courses.remove(random);
                     String printStr = "INSERT INTO Classes ( class_id, course_id, class_period, teacher_id, classroom_id ) VALUES ( " + class_id + ", " + course_id + ", " + period + ", " + teacher + ", " + (classrooms.indexOf(course[1]) + 1) + " );";
                     System.out.println(printStr);
-                    periods_to_rooms_to_courses.remove(random);
+                    periods_to_rooms_to_courses.remove(0);
                     class_id++;
                 }
             }
