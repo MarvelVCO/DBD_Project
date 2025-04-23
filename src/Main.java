@@ -27,9 +27,9 @@ public class Main {
         for (int i = 1; i <= 10; i++) {
             classIdsByPeriod.put(Integer.valueOf(i), new ArrayList<>());
         }
+        generateClasses();
         generateAssignments();
         generateTeachers(teachers.get(0).split(",").length);
-        generateClasses();
         generateStudents(5000);
         generateGrades();
         generateRosters();
