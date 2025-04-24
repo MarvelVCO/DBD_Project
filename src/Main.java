@@ -27,9 +27,9 @@ public class Main {
         for (int i = 1; i <= 10; i++) {
             classIdsByPeriod.put(Integer.valueOf(i), new ArrayList<>());
         }
+        generateTeachers(teachers.get(0).split(",").length);
         generateClasses();
         generateAssignments();
-        generateTeachers(teachers.get(0).split(",").length);
         generateStudents(5000);
         generateGrades();
         generateRosters();
@@ -152,8 +152,9 @@ public class Main {
                 skippedTeachers += 1;
                 continue;
             }
-            System.out.println("INSERT INTO Teachers ( first_name, last_name, teacher_id, department_id ) VALUES ( '" + teacherFirstName + "', '" + teacherLastName + "', " + (i-skippedTeachers+1) + " , " + departmentId + ",) ;");
+            System.out.println("INSERT INTO Teachers ( first_name, last_name, teacher_id, department_id ) VALUES ( '" + teacherFirstName + "', '" + teacherLastName + "', " + (i-skippedTeachers+1) + " , " + (departmentId+1) + ") ;");
         }
+        //System.out.println("TSize: !!!!!!" + (teacherNames.length-skippedTeachers));
     }
 
     // Max 720, closer to 720 is worse
@@ -215,7 +216,7 @@ public class Main {
         }
 
         periods_to_rooms_to_courses = new ArrayList<>(Arrays.asList(periods_to_rooms_to_courses.stream().filter(a -> a.split(",").length > 2).toArray(String[]::new)));
-        for (int teacher = 1; teacher <= teachers.get(0).split(",").length; teacher++) {
+        for (int teacher = 1; teacher <= 336; teacher++) {
             for (int period = 1; period <= 10; period++) {
                 if (!periods_to_rooms_to_courses.isEmpty()) {
                     String[] course = periods_to_rooms_to_courses.get(0).split(",");
