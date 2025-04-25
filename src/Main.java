@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 public class Main {
@@ -15,54 +17,69 @@ public class Main {
     static ArrayList<Integer> assignments;
     static HashMap<Integer, ArrayList<Integer>> classIdsByPeriod;
     static HashMap<Integer, ArrayList<Integer>> studentToClasses;
+    static PrintWriter outputWriter;
 
     public static void main(String[] args) {
-        dropDatabase();
-        createDatabase();
-        courses = getFileData("src/coursenames.csv");
-        teachers = getFileData("src/teachernames.csv");
-        departments = generateDepartments();
-        courseTypes = generateCourseTypes();
-        generateCourses();
-        generateClassrooms(720);
-        classIdsByPeriod = new HashMap<>();
-        for (int i = 1; i <= 10; i++) {
-            classIdsByPeriod.put(Integer.valueOf(i), new ArrayList<>());
+        try {
+            // Create a FileWriter for the db file
+            outputWriter = new PrintWriter(new FileWriter("db"));
+
+            dropDatabase();
+            createDatabase();
+            courses = getFileData("src/coursenames.csv");
+            teachers = getFileData("src/teachernames.csv");
+            departments = generateDepartments();
+            courseTypes = generateCourseTypes();
+            generateCourses();
+            generateClassrooms(720);
+            classIdsByPeriod = new HashMap<>();
+            for (int i = 1; i <= 10; i++) {
+                classIdsByPeriod.put(Integer.valueOf(i), new ArrayList<>());
+            }
+            generateTeachers(teachers.get(0).split(",").length);
+            generateClasses();
+            generateAssignments();
+            generateStudents(5000);
+            generateRosters();
+            generateGrades();
+
+            // Close the file writer when done
+            outputWriter.close();
+            System.out.println("Database script successfully written to file 'db'");
+        } catch (IOException e) {
+            System.err.println("Error writing to output file: " + e.getMessage());
+            e.printStackTrace();
         }
-        generateTeachers(teachers.get(0).split(",").length);
-        generateClasses();
-        generateAssignments();
-        generateStudents(5000);
-        generateRosters();
-        generateGrades();
     }
 
+    // Modified methods to write to file instead of System.out
+
     public static void createDatabase() {
-        System.out.println("CREATE TABLE Students ( first_name varchar(255), last_name varchar(255), student_id integer Primary Key );");
-        System.out.println("CREATE TABLE CourseTypes ( type_name varchar(255), type_id integer PRIMARY KEY );");
-        System.out.println("CREATE TABLE Classrooms ( classroom_name varchar(255), classroom_id integer PRIMARY KEY );");
-        System.out.println("CREATE TABLE AssignmentTypes ( type_id integer PRIMARY KEY, type_name varchar(255) );");
-        System.out.println("CREATE TABLE Departments ( department_id integer PRIMARY KEY, department_name varchar(255) );");
-        System.out.println("CREATE TABLE Assignments ( assignment_name varchar(255), assignment_id integer PRIMARY KEY, type_id integer, FOREIGN KEY (type_id) REFERENCES AssignmentTypes(type_id) );");
-        System.out.println("CREATE TABLE Courses ( course_name varchar(255), type_id integer, course_id integer PRIMARY KEY, FOREIGN KEY (type_id) REFERENCES CourseTypes(type_id) );");
-        System.out.println("CREATE TABLE Teachers ( first_name varchar(255), last_name varchar(255), teacher_id integer PRIMARY KEY, department_id integer, FOREIGN KEY (department_id) REFERENCES Departments(department_id) );");
-        System.out.println("CREATE TABLE Classes ( course_id integer, class_period integer, teacher_id integer, classroom_id integer, class_id integer PRIMARY KEY, FOREIGN KEY (course_id) references Courses(course_id), FOREIGN KEY (teacher_id) references Teachers(teacher_id), FOREIGN KEY (classroom_id) references Classrooms(classroom_id) );");
-        System.out.println("CREATE TABLE Grades ( assignment_id integer, student_id integer, grade float, FOREIGN KEY ( assignment_id ) REFERENCES Assignments( assignment_id ), FOREIGN KEY ( student_id) REFERENCES Students( student_id) );");
-        System.out.println("CREATE TABLE Rosters ( student_id integer, class_id integer, FOREIGN KEY (student_id) REFERENCES Students(student_id), FOREIGN KEY (class_id) REFERENCES Classes(class_id) );");
+        outputWriter.println("CREATE TABLE Students ( first_name varchar(255), last_name varchar(255), student_id integer Primary Key );");
+        outputWriter.println("CREATE TABLE CourseTypes ( type_name varchar(255), type_id integer PRIMARY KEY );");
+        outputWriter.println("CREATE TABLE Classrooms ( classroom_name varchar(255), classroom_id integer PRIMARY KEY );");
+        outputWriter.println("CREATE TABLE AssignmentTypes ( type_id integer PRIMARY KEY, type_name varchar(255) );");
+        outputWriter.println("CREATE TABLE Departments ( department_id integer PRIMARY KEY, department_name varchar(255) );");
+        outputWriter.println("CREATE TABLE Assignments ( assignment_name varchar(255), assignment_id integer PRIMARY KEY, type_id integer, FOREIGN KEY (type_id) REFERENCES AssignmentTypes(type_id) );");
+        outputWriter.println("CREATE TABLE Courses ( course_name varchar(255), type_id integer, course_id integer PRIMARY KEY, FOREIGN KEY (type_id) REFERENCES CourseTypes(type_id) );");
+        outputWriter.println("CREATE TABLE Teachers ( first_name varchar(255), last_name varchar(255), teacher_id integer PRIMARY KEY, department_id integer, FOREIGN KEY (department_id) REFERENCES Departments(department_id) );");
+        outputWriter.println("CREATE TABLE Classes ( course_id integer, class_period integer, teacher_id integer, classroom_id integer, class_id integer PRIMARY KEY, FOREIGN KEY (course_id) references Courses(course_id), FOREIGN KEY (teacher_id) references Teachers(teacher_id), FOREIGN KEY (classroom_id) references Classrooms(classroom_id) );");
+        outputWriter.println("CREATE TABLE Grades ( assignment_id integer, student_id integer, grade float, FOREIGN KEY ( assignment_id ) REFERENCES Assignments( assignment_id ), FOREIGN KEY ( student_id) REFERENCES Students( student_id) );");
+        outputWriter.println("CREATE TABLE Rosters ( student_id integer, class_id integer, FOREIGN KEY (student_id) REFERENCES Students(student_id), FOREIGN KEY (class_id) REFERENCES Classes(class_id) );");
     }
 
     public static void dropDatabase() {
-        System.out.println("DROP TABLE IF EXISTS Rosters;");
-        System.out.println("DROP TABLE IF EXISTS Grades;");
-        System.out.println("DROP TABLE IF EXISTS Classes;");
-        System.out.println("DROP TABLE IF EXISTS Teachers;");
-        System.out.println("DROP TABLE IF EXISTS Courses;");
-        System.out.println("DROP TABLE IF EXISTS Assignments;");
-        System.out.println("DROP TABLE IF EXISTS Departments;");
-        System.out.println("DROP TABLE IF EXISTS AssignmentTypes;");
-        System.out.println("DROP TABLE IF EXISTS Classrooms;");
-        System.out.println("DROP TABLE IF EXISTS CourseTypes;");
-        System.out.println("DROP TABLE IF EXISTS Students;");
+        outputWriter.println("DROP TABLE IF EXISTS Rosters;");
+        outputWriter.println("DROP TABLE IF EXISTS Grades;");
+        outputWriter.println("DROP TABLE IF EXISTS Classes;");
+        outputWriter.println("DROP TABLE IF EXISTS Teachers;");
+        outputWriter.println("DROP TABLE IF EXISTS Courses;");
+        outputWriter.println("DROP TABLE IF EXISTS Assignments;");
+        outputWriter.println("DROP TABLE IF EXISTS Departments;");
+        outputWriter.println("DROP TABLE IF EXISTS AssignmentTypes;");
+        outputWriter.println("DROP TABLE IF EXISTS Classrooms;");
+        outputWriter.println("DROP TABLE IF EXISTS CourseTypes;");
+        outputWriter.println("DROP TABLE IF EXISTS Students;");
     }
 
     public static void generateStudents(int n) {
@@ -74,7 +91,7 @@ public class Main {
             first_name = first_name.substring(0, 1).toUpperCase() + first_name.substring(1);
             last_name = last_name.substring(0, 1).toUpperCase() + last_name.substring(1);
             students.add(first_name + " " + last_name);
-            System.out.println("INSERT INTO Students ( first_name, last_name, student_id ) VALUES ( '" + first_name + "', '" + last_name + "', " + (i + 1) + " );");
+            outputWriter.println("INSERT INTO Students ( first_name, last_name, student_id ) VALUES ( '" + first_name + "', '" + last_name + "', " + (i + 1) + " );");
         }
     }
 
@@ -90,7 +107,7 @@ public class Main {
                         d.equals("Support Staff") ||
                         d.equals("Teachers"))).toArray(String[]::new);
         for (int i = 0; i < departments.length; i++) {
-            System.out.println("INSERT INTO Departments ( department_id, department_name ) VALUES ( " + (i + 1) + ", '" + departments[i] + "' );");
+            outputWriter.println("INSERT INTO Departments ( department_id, department_name ) VALUES ( " + (i + 1) + ", '" + departments[i] + "' );");
         }
         return new ArrayList<>(Arrays.asList(departments));
     }
@@ -99,7 +116,7 @@ public class Main {
         String[] duplicatesIncludedCourseTypes = courses.stream().map(c -> c.split(",")[2]).toArray(String[]::new);
         String[] courseTypes = Arrays.stream(duplicatesIncludedCourseTypes).distinct().toArray(String[]::new);
         for (int i = 0; i < courseTypes.length; i++) {
-            System.out.println("INSERT INTO CourseTypes ( type_id, type_name ) VALUES ( " + (i + 1) + ", '" + courseTypes[i] + "' );");
+            outputWriter.println("INSERT INTO CourseTypes ( type_id, type_name ) VALUES ( " + (i + 1) + ", '" + courseTypes[i] + "' );");
         }
         return new ArrayList<>(Arrays.asList(courseTypes));
     }
@@ -107,20 +124,19 @@ public class Main {
     public static void generateCourses() {
         for (int i = 0; i < courses.size(); i++) {
             String[] currentCourse = courses.get(i).split(",");
-            System.out.println("INSERT INTO Courses ( course_id, course_name, type_id ) VALUES ( " + (i + 1) + ", '" + currentCourse[1] + "', " + (courseTypes.indexOf(currentCourse[2]) + 1) + " );");
+            outputWriter.println("INSERT INTO Courses ( course_id, course_name, type_id ) VALUES ( " + (i + 1) + ", '" + currentCourse[1] + "', " + (courseTypes.indexOf(currentCourse[2]) + 1) + " );");
         }
     }
 
     public static void printAssignment(int id, int type, int classId) {
         String assignmentName = "Assignment " + (id + 1);
         assignments.add(classId);
-        System.out.println("INSERT INTO Assignments ( assignment_name, assignment_id, type_id ) VALUES ( '" + assignmentName + "', " + (id + 1) + ", " + type + ");");
+        outputWriter.println("INSERT INTO Assignments ( assignment_name, assignment_id, type_id ) VALUES ( '" + assignmentName + "', " + (id + 1) + ", " + type + ");");
     }
 
-    // TODO: Make it do 12 minor 3 major ty very much
     public static void generateAssignments() {
         for (int i = 0; i < assignmentTypes.length; i++) {
-            System.out.println("INSERT INTO AssignmentTypes ( type_id , type_name ) VALUES (" + (i + 1) + ", '" + assignmentTypes[i] + "');");
+            outputWriter.println("INSERT INTO AssignmentTypes ( type_id , type_name ) VALUES (" + (i + 1) + ", '" + assignmentTypes[i] + "');");
         }
 
         assignments = new ArrayList<>();
@@ -137,7 +153,6 @@ public class Main {
                 assignmentId++;
             }
         }
-
     }
 
     public static void generateTeachers(int n) {
@@ -154,12 +169,10 @@ public class Main {
                 skippedTeachers += 1;
                 continue;
             }
-            System.out.println("INSERT INTO Teachers ( first_name, last_name, teacher_id, department_id ) VALUES ( '" + teacherFirstName + "', '" + teacherLastName + "', " + (i-skippedTeachers+1) + " , " + (departmentId+1) + ") ;");
+            outputWriter.println("INSERT INTO Teachers ( first_name, last_name, teacher_id, department_id ) VALUES ( '" + teacherFirstName + "', '" + teacherLastName + "', " + (i-skippedTeachers+1) + " , " + (departmentId+1) + ") ;");
         }
-        //System.out.println("TSize: !!!!!!" + (teacherNames.length-skippedTeachers));
     }
 
-    // Max 720, closer to 720 is worse
     public static void generateClassrooms(int n) {
         classrooms = new ArrayList<>();
         for (int i = 0; i < n; i++) {
@@ -174,26 +187,26 @@ public class Main {
                 }
                 String sideStr = "";
                 int sideInt = (int) (Math.random() * 4);
-                 if (sideInt == 0) {
-                     sideStr = "N";
-                 }
+                if (sideInt == 0) {
+                    sideStr = "N";
+                }
 
-                 if (sideInt == 1) {
-                     sideStr = "E";
-                 }
-                 if (sideInt == 2) {
-                     sideStr = "S";
-                 }
+                if (sideInt == 1) {
+                    sideStr = "E";
+                }
+                if (sideInt == 2) {
+                    sideStr = "S";
+                }
 
-                 if (sideInt == 3) {
-                     sideStr = "W";
-                 }
+                if (sideInt == 3) {
+                    sideStr = "W";
+                }
 
                 String roomStr = String.valueOf((int) (Math.random() * 20 + 1));
                 String className = floorStr + sideStr + roomStr;
                 unique = !classrooms.contains(className);
                 if (unique) {
-                    System.out.println("INSERT INTO Classrooms ( classroom_id, classroom_name ) VALUES ( " + (i + 1) + ", '" + className + "') ;");
+                    outputWriter.println("INSERT INTO Classrooms ( classroom_id, classroom_name ) VALUES ( " + (i + 1) + ", '" + className + "') ;");
                     classrooms.add(className);
                 }
             }
@@ -230,7 +243,7 @@ public class Main {
                         }
                     }
                     String printStr = "INSERT INTO Classes ( class_id, course_id, class_period, teacher_id, classroom_id ) VALUES ( " + class_id + ", " + course_id + ", " + period + ", " + teacher + ", " + (classrooms.indexOf(course[1]) + 1) + " );";
-                    System.out.println(printStr);
+                    outputWriter.println(printStr);
                     classes.add(printStr);
                     periods_to_rooms_to_courses.remove(0);
                     classIdsByPeriod.get(period).add(class_id);
@@ -242,19 +255,19 @@ public class Main {
 
     public static void generateGrades() {
         for (int assignment_id = 1; assignment_id <= assignments.size(); assignment_id++) {
-            int classId = assignments.get(assignment_id-1);
+            int classId = assignments.get(assignment_id - 1);
             Set<Integer> studentIdKeys = studentToClasses.keySet();
-            //System.out.println(studentIdKeys);
             for (int key : studentIdKeys) {
-                //System.out.println(studentToClasses.get(key));
                 for (int studentClassId : studentToClasses.get(key)) {
                     if (studentClassId == classId) {
                         double grade = Math.round((Math.random() * 100) * 10.0) / 10.0;
-                        System.out.println("INSERT INTO Grades ( assignment_id, student_id, grade ) VALUES ( " + assignment_id + ", " + key + ", " + grade + " );");
+                        outputWriter.println("INSERT INTO Grades ( assignment_id, student_id, grade ) VALUES ( " + assignment_id + ", " + key + ", " + grade + " );");
                     }
                 }
             }
-            
+        }
+    }
+
     public static void generateRosters() {
         studentToClasses = new HashMap<>();
         int class_id = 1;
@@ -269,17 +282,14 @@ public class Main {
                 ArrayList<Integer> availableClasses = classIdsByPeriod.get(period);
 
                 if (!availableClasses.isEmpty()) {
-
-                    System.out.println("INSERT INTO Rosters ( student_id, class_id ) VALUES ( " + student_id + ", " + (class_id % classes.size() + 1) + " );");
-
-                    studentClasses.add(class_id%classes.size());
+                    outputWriter.println("INSERT INTO Rosters ( student_id, class_id ) VALUES ( " + student_id + ", " + (class_id % classes.size() + 1) + " );");
+                    studentClasses.add(class_id % classes.size() + 1);
                 }
 
                 studentToClasses.get(student_id).add(class_id);
                 class_id+=1;
             }
         }
-
     }
 
     public static ArrayList<String> getFileData(String fileName) {
@@ -295,6 +305,7 @@ public class Main {
             return fileData;
         }
         catch (FileNotFoundException e) {
+            System.err.println("File not found: " + fileName);
             return fileData;
         }
     }
