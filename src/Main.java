@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Main {
@@ -11,8 +12,9 @@ public class Main {
     static ArrayList<String> teachers;
     static ArrayList<String> students;
     static ArrayList<String> classrooms;
-    static ArrayList<String> assignments;
+    static ArrayList<Integer> assignments;
     static HashMap<Integer, ArrayList<Integer>> classIdsByPeriod;
+    static HashMap<Integer, ArrayList<Integer>> studentToClasses;
 
     public static void main(String[] args) {
         dropDatabase();
@@ -31,8 +33,8 @@ public class Main {
         generateClasses();
         generateAssignments();
         generateStudents(5000);
-        generateGrades();
         generateRosters();
+        generateGrades();
     }
 
     public static void createDatabase() {
@@ -109,9 +111,9 @@ public class Main {
         }
     }
 
-    public static void printAssignment(int id, int type) {
+    public static void printAssignment(int id, int type, int classId) {
         String assignmentName = "Assignment " + (id + 1);
-        assignments.add(assignmentName);
+        assignments.add(classId);
         System.out.println("INSERT INTO Assignments ( assignment_name, assignment_id, type_id ) VALUES ( '" + assignmentName + "', " + (id + 1) + ", " + type + ");");
     }
 
@@ -127,11 +129,11 @@ public class Main {
 
         for (int i = 0; i < classes.size(); i++) {
             for (int maj = 0; maj < 3; maj++) {
-                printAssignment(assignmentId, 0);
+                printAssignment(assignmentId, 1, i);
                 assignmentId++;
             }
             for (int min = 0; min < 12; min++) {
-                printAssignment(assignmentId, 1);
+                printAssignment(assignmentId, 2, i);
                 assignmentId++;
             }
         }
@@ -229,7 +231,9 @@ public class Main {
                     }
                     String printStr = "INSERT INTO Classes ( class_id, course_id, class_period, teacher_id, classroom_id ) VALUES ( " + class_id + ", " + course_id + ", " + period + ", " + teacher + ", " + (classrooms.indexOf(course[1]) + 1) + " );";
                     System.out.println(printStr);
+                    classes.add(printStr);
                     periods_to_rooms_to_courses.remove(0);
+                    classIdsByPeriod.get(period).add(class_id);
                     class_id++;
                 }
             }
@@ -238,23 +242,38 @@ public class Main {
 
     public static void generateGrades() {
         for (int assignment_id = 1; assignment_id <= assignments.size(); assignment_id++) {
-            int numberOfStudentsToGrade = 200 + (int)(Math.random() * 800);
+            int classId = assignments.get(assignment_id-1);
+            Set<Integer> studentIdKeys = studentToClasses.keySet();
 
-            Set<Integer> studentIds = new HashSet<>();
-            while (studentIds.size() < numberOfStudentsToGrade && studentIds.size() < students.size()) {
-                studentIds.add(Integer.valueOf((int)(Math.random() * students.size()) + 1));
+            for (int key : studentIdKeys) {
+                for (int studentClassId : studentToClasses.get(key)) {
+                    if (studentClassId == classId) {
+                        double grade = Math.round((Math.random() * 100) * 10.0) / 10.0;
+                        System.out.println("INSERT INTO Grades ( assignment_id, student_id, grade ) VALUES ( " + assignment_id + ", " + key + ", " + grade + " );");
+                    }
+                }
             }
+            // thanks marvel
+//            int numberOfStudentsToGrade = 200 + (int)(Math.random() * 800);
+//
+//            Set<Integer> studentIds = new HashSet<>();
+//            while (studentIds.size() < numberOfStudentsToGrade && studentIds.size() < students.size()) {
+//                studentIds.add(Integer.valueOf((int)(Math.random() * students.size()) + 1));
+//            }
+//
+//            for (int student_id : studentIds) {
+//                double grade = Math.round((Math.random() * 100) * 10.0) / 10.0;
+//                System.out.println("INSERT INTO Grades ( assignment_id, student_id, grade ) VALUES ( " +
+//                        assignment_id + ", " + student_id + ", " + grade + " );");
+//            }
 
-            for (int student_id : studentIds) {
-                double grade = Math.round((Math.random() * 100) * 10.0) / 10.0;
-                System.out.println("INSERT INTO Grades ( assignment_id, student_id, grade ) VALUES ( " +
-                        assignment_id + ", " + student_id + ", " + grade + " );");
-            }
         }
     }
 
     public static void generateRosters() {
+        studentToClasses = new HashMap<>();
         for (int student_id = 1; student_id <= students.size(); student_id++) {
+            ArrayList<Integer> studentClasses = new ArrayList<>();
             for (int period = 1; period <= 10; period++) {
                 ArrayList<Integer> availableClasses = classIdsByPeriod.get(period);
 
@@ -264,8 +283,10 @@ public class Main {
 
                     System.out.println("INSERT INTO Rosters ( student_id, class_id ) VALUES ( " +
                             student_id + ", " + class_id + " );");
+                    studentClasses.add(class_id);
                 }
             }
+            studentToClasses.put(student_id, studentClasses);
         }
     }
 
