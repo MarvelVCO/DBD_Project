@@ -244,8 +244,9 @@ public class Main {
         for (int assignment_id = 1; assignment_id <= assignments.size(); assignment_id++) {
             int classId = assignments.get(assignment_id-1);
             Set<Integer> studentIdKeys = studentToClasses.keySet();
-
+            //System.out.println(studentIdKeys);
             for (int key : studentIdKeys) {
+                //System.out.println(studentToClasses.get(key));
                 for (int studentClassId : studentToClasses.get(key)) {
                     if (studentClassId == classId) {
                         double grade = Math.round((Math.random() * 100) * 10.0) / 10.0;
@@ -287,7 +288,7 @@ public class Main {
 
                     System.out.println("INSERT INTO Rosters ( student_id, class_id ) VALUES ( " + student_id + ", " + (class_id%classes.size()) + " );");
 
-                    studentClasses.add(class_id);
+                    studentClasses.add(class_id%classes.size());
                 }
 
                 studentToClasses.get(student_id).add(class_id);
