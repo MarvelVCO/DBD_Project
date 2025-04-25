@@ -274,7 +274,7 @@ public class Main {
 
                     System.out.println("INSERT INTO Rosters ( student_id, class_id ) VALUES ( " + student_id + ", " + (class_id % classes.size() + 1) + " );");
 
-                    studentClasses.add(class_id%classes.size());
+                    studentClasses.add(class_id % classes.size() + 1);
                 }
 
                 studentToClasses.get(student_id).add(class_id);
