@@ -21,7 +21,6 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            // Create a FileWriter for the db file
             outputWriter = new PrintWriter(new FileWriter("db"));
 
             dropDatabase();
@@ -43,7 +42,6 @@ public class Main {
             generateRosters();
             generateGrades();
 
-            // Close the file writer when done
             outputWriter.close();
             System.out.println("Database script successfully written to file 'db'");
         } catch (IOException e) {
@@ -51,8 +49,6 @@ public class Main {
             e.printStackTrace();
         }
     }
-
-    // Modified methods to write to file instead of System.out
 
     public static void createDatabase() {
         outputWriter.println("CREATE TABLE Students ( first_name varchar(255), last_name varchar(255), student_id integer Primary Key );");
