@@ -254,6 +254,8 @@ public class Main {
                     }
                 }
             }
+        }
+    }
             
     public static void generateRosters() {
         studentToClasses = new HashMap<>();
