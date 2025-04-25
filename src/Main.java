@@ -266,28 +266,35 @@ public class Main {
 //                System.out.println("INSERT INTO Grades ( assignment_id, student_id, grade ) VALUES ( " +
 //                        assignment_id + ", " + student_id + ", " + grade + " );");
 //            }
-
+            //System.out.println(classes.size());
         }
     }
 
     public static void generateRosters() {
         studentToClasses = new HashMap<>();
-        for (int student_id = 1; student_id <= students.size(); student_id++) {
-            ArrayList<Integer> studentClasses = new ArrayList<>();
-            for (int period = 1; period <= 10; period++) {
+        int class_id = 1;
+        for (int period = 1; period <= 10; period++) {
+            for (int student_id = 1; student_id <= students.size(); student_id++) {
+                ArrayList<Integer> studentClasses = new ArrayList<>();
+                if (studentToClasses.containsKey(student_id)) {
+                    studentClasses = studentToClasses.get(student_id);
+                } else {
+                    studentToClasses.put(student_id, studentClasses);
+                }
                 ArrayList<Integer> availableClasses = classIdsByPeriod.get(period);
 
                 if (!availableClasses.isEmpty()) {
-                    int randomIndex = (int)(Math.random() * availableClasses.size());
-                    int class_id = availableClasses.get(randomIndex);
 
-                    System.out.println("INSERT INTO Rosters ( student_id, class_id ) VALUES ( " +
-                            student_id + ", " + class_id + " );");
+                    System.out.println("INSERT INTO Rosters ( student_id, class_id ) VALUES ( " + student_id + ", " + (class_id%classes.size()) + " );");
+
                     studentClasses.add(class_id);
                 }
+
+                studentToClasses.get(student_id).add(class_id);
+                class_id+=1;
             }
-            studentToClasses.put(student_id, studentClasses);
         }
+
     }
 
     public static ArrayList<String> getFileData(String fileName) {
