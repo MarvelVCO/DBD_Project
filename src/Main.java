@@ -254,23 +254,7 @@ public class Main {
                     }
                 }
             }
-            // thanks marvel
-//            int numberOfStudentsToGrade = 200 + (int)(Math.random() * 800);
-//
-//            Set<Integer> studentIds = new HashSet<>();
-//            while (studentIds.size() < numberOfStudentsToGrade && studentIds.size() < students.size()) {
-//                studentIds.add(Integer.valueOf((int)(Math.random() * students.size()) + 1));
-//            }
-//
-//            for (int student_id : studentIds) {
-//                double grade = Math.round((Math.random() * 100) * 10.0) / 10.0;
-//                System.out.println("INSERT INTO Grades ( assignment_id, student_id, grade ) VALUES ( " +
-//                        assignment_id + ", " + student_id + ", " + grade + " );");
-//            }
-            //System.out.println(classes.size());
-        }
-    }
-
+            
     public static void generateRosters() {
         studentToClasses = new HashMap<>();
         int class_id = 1;
@@ -286,7 +270,7 @@ public class Main {
 
                 if (!availableClasses.isEmpty()) {
 
-                    System.out.println("INSERT INTO Rosters ( student_id, class_id ) VALUES ( " + student_id + ", " + (class_id%classes.size()) + " );");
+                    System.out.println("INSERT INTO Rosters ( student_id, class_id ) VALUES ( " + student_id + ", " + (class_id % classes.size() + 1) + " );");
 
                     studentClasses.add(class_id%classes.size());
                 }
