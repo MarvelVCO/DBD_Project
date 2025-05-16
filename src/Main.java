@@ -270,24 +270,24 @@ public class Main {
 
     public static void generateRosters() {
         studentToClasses = new HashMap<>();
-        int class_id = 1;
-        for (int period = 1; period <= 10; period++) {
-            for (int student_id = 1; student_id <= students.size(); student_id++) {
-                ArrayList<Integer> studentClasses = new ArrayList<>();
-                if (studentToClasses.containsKey(student_id)) {
-                    studentClasses = studentToClasses.get(student_id);
-                } else {
-                    studentToClasses.put(student_id, studentClasses);
-                }
+
+        Random rand = new Random();
+
+        for (int student_id = 1; student_id <= students.size(); student_id++) {
+            ArrayList<Integer> studentClasses = new ArrayList<>();
+            studentToClasses.put(student_id, studentClasses);
+
+            for (int period = 1; period <= 10; period++) {
                 ArrayList<Integer> availableClasses = classIdsByPeriod.get(period);
 
                 if (!availableClasses.isEmpty()) {
-                    outputWriter.println("INSERT INTO Rosters ( student_id, class_id ) VALUES ( " + student_id + ", " + (class_id % classes.size() + 1) + " );");
-                    studentClasses.add(class_id % classes.size() + 1);
-                }
+                    int randomIndex = rand.nextInt(availableClasses.size());
+                    int selectedClassId = availableClasses.get(randomIndex);
 
-                studentToClasses.get(student_id).add(class_id);
-                class_id+=1;
+                    outputWriter.println("INSERT INTO Rosters ( student_id, class_id ) VALUES ( " + student_id + ", " + selectedClassId + " );");
+
+                    studentClasses.add(selectedClassId);
+                }
             }
         }
     }
